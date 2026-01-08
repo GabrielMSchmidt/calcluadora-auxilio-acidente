@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Auxílio Acidente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .error-msg { font-size: 0.75rem; color: #ef4444; margin-top: 0.25rem; display: none; }
+        .input-error { border-color: #ef4444 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Cabeçalho -->
+    <header class="w-full bg-white shadow-sm py-6">
+        <div class="max-w-5xl mx-auto px-6">
+            <h1 class="text-2xl font-bold text-gray-900">Calculadora de Auxílio Acidente</h1>
+            <p class="text-gray-500 text-sm mt-1">Estimativa do valor de Auxílio Acidente a receber.</p>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-10">
+        
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8">
+            
+            <!-- Inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                
+                <!-- Input Salário da Época -->
+                <div class="flex flex-col">
+                    <label for="salarioEpoca" class="text-sm font-semibold text-gray-700 mb-2">Salário da Época (R$)</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">R$</span>
+                        <input type="number" id="salarioEpoca" placeholder="Ex: 3000.00" step="0.01"
+                            class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                    </div>
+                    <span class="text-xs text-gray-500 mt-1">Salário de benefício na época.</span>
+                    <span id="error-salario" class="error-msg">Informe um valor válido.</span>
+                </div>
+
+                <!-- Input Meses de Retroativos -->
+                <div class="flex flex-col">
+                    <label for="mesesRetroativos" class="text-sm font-semibold text-gray-700 mb-2">Meses de Retroativos</label>
+                    <input type="number" id="mesesRetroativos" min="1" max="65" placeholder="Ex: 24"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-600">
+                    <span class="text-xs text-gray-500 mt-1">Máximo: 65 meses (5 anos + 13º).</span>
+                    <span id="error-retroativos" class="error-msg">Informe entre 1 e 65 meses.</span>
+                </div>
+
+                <!-- Input Duração do Processo -->
+                <div class="flex flex-col">
+                    <label for="duracaoProcesso" class="text-sm font-semibold text-gray-700 mb-2">Duração do Processo (meses)</label>
+                    <input type="number" id="duracaoProcesso" min="1" placeholder="Ex: 18" value="18"
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-600">
+                    <span class="text-xs text-gray-500 mt-1">Tempo médio: 18 meses.</span>
+                    <span id="error-duracao" class="error-msg">Informe um número válido.</span>
+                </div>
+
+            </div>
+
+            <!-- Botões -->
+            <div class="flex flex-wrap gap-4 mb-10">
+                <button onclick="calcular()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-md flex items-center gap-2">
+                    <i data-lucide="calculator" class="w-5 h-5"></i>
+                    Calcular
+                </button>
+                
+                <button onclick="limpar()" 
+                    class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-3 px-8 rounded-lg transition-colors flex items-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    Limpar
+                </button>
+            </div>
+
+            <!-- Resultados -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Card Informativo 1 - Valor Mensal -->
+                <div class="bg-blue-50 rounded-lg p-6 border border-blue-100">
+                    <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Valor Mensal (50%)</span>
+                    <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-mensal">R$ 0,00</div>
+                    <div class="text-xs text-gray-500 mt-1">50% do salário da época</div>
+                </div>
+
+                <!-- Card Informativo 2 - Total de Meses -->
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Total de Meses</span>
+                    <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-total">0</div>
+                    <div class="text-xs text-gray-400 mt-1" id="res-detalhe-meses">Retroativos: 0 | Processo: 0</div>
+                </div>
+
+                <!-- Card Resultado Final -->
+                <div class="bg-gray-900 rounded-lg p-6 border border-gray-800 text-white shadow-md">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Valor Líquido Estimado</span>
+                    <div class="mt-2 text-3xl font-bold text-white" id="res-total">R$ 0,00</div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-8">
+        <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center md:justify-between gap-6 w-full">
+            <div class="flex items-center gap-3">
+                <div class="text-sm">
+                    <p class="font-bold text-gray-900">BMZ - Belin, Medeiros e Zaiats</p>
+                    <p class="text-gray-500">Advogados e Associados</p>
+                </div>
+            </div>
+            <div class="flex-1 flex justify-center">
+                <img src="Logo-BMZ.png" alt="Logo BMZ" class="h-20 object-contain" onerror="this.style.display='none'">
+            </div>
+            <div class="text-xs text-gray-400 text-center md:text-right">
+                &copy; <span id="anoAtual"></span> Todos os direitos reservados.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+        document.getElementById('anoAtual').innerText = new Date().getFullYear();
+
+        // --- CONSTANTES ---
+        const CONST_SALARIO_MINIMO = 1518.00; // Salário mínimo 2025
+        const CONST_PERCENTUAL_AUXILIO = 0.50; // 50% do salário
+        const CONST_PERCENTUAL_HONORARIOS = 0.40; // 40% de honorários
+        const CONST_MAX_MESES_RETROATIVOS = 65; // 5 anos + 13º salário
+
+        const formatarMoeda = (valor) => {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+        };
+
+        const mostrarErro = (inputId, msgId, mensagem) => {
+            const input = document.getElementById(inputId);
+            const span = document.getElementById(msgId);
+            input.classList.add('input-error');
+            span.innerText = mensagem;
+            span.style.display = 'block';
+        };
+
+        const limparErros = () => {
+            const inputs = ['salarioEpoca', 'mesesRetroativos', 'duracaoProcesso'];
+            const spans = ['error-salario', 'error-retroativos', 'error-duracao'];
+            
+            inputs.forEach(id => document.getElementById(id).classList.remove('input-error'));
+            spans.forEach(id => document.getElementById(id).style.display = 'none');
+        };
+
+        function calcular() {
+            limparErros();
+
+            const salarioInput = document.getElementById('salarioEpoca').value;
+            const mesesRetroativosInput = document.getElementById('mesesRetroativos').value;
+            const duracaoProcessoInput = document.getElementById('duracaoProcesso').value;
+
+            if (!salarioInput || !mesesRetroativosInput || !duracaoProcessoInput) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            const salarioEpoca = parseFloat(salarioInput);
+            const mesesRetroativos = parseInt(mesesRetroativosInput, 10);
+            const duracaoProcesso = parseInt(duracaoProcessoInput, 10);
+
+            let temErro = false;
+            
+            if (salarioEpoca <= 0 || Number.isNaN(salarioEpoca)) {
+                mostrarErro('salarioEpoca', 'error-salario', 'Informe um valor válido maior que zero.');
+                temErro = true;
+            }
+
+            if (Number.isNaN(mesesRetroativos) || mesesRetroativos < 1) {
+                mostrarErro('mesesRetroativos', 'error-retroativos', 'Informe pelo menos 1 mês.');
+                temErro = true;
+            } else if (mesesRetroativos > CONST_MAX_MESES_RETROATIVOS) {
+                mostrarErro('mesesRetroativos', 'error-retroativos', 
+                    `O máximo permitido é ${CONST_MAX_MESES_RETROATIVOS} meses.`);
+                temErro = true;
+            }
+
+            if (Number.isNaN(duracaoProcesso) || duracaoProcesso < 1) {
+                mostrarErro('duracaoProcesso', 'error-duracao', 'Informe um número válido de meses.');
+                temErro = true;
+            }
+
+            if (temErro) return;
+
+            // CÁLCULOS
+            // Se o salário da época for menor que o salário mínimo, usar 50% do salário mínimo
+            let valorMensal;
+            if (salarioEpoca < CONST_SALARIO_MINIMO) {
+                valorMensal = CONST_SALARIO_MINIMO * CONST_PERCENTUAL_AUXILIO;
+            } else {
+                valorMensal = salarioEpoca * CONST_PERCENTUAL_AUXILIO;
+            }
+            
+            // Total de meses = Retroativos + Duração do Processo
+            const totalMeses = mesesRetroativos + duracaoProcesso;
+            
+            // Valor bruto = Valor Mensal (50%) * Total de Meses
+            const valorBruto = valorMensal * totalMeses;
+            
+            // Descontos = 40% dos honorários + 4 salários mínimos
+            const descontoHonorarios = valorBruto * CONST_PERCENTUAL_HONORARIOS;
+            const descontoSalariosMinimos = 4 * CONST_SALARIO_MINIMO;
+            const totalDescontos = descontoHonorarios + descontoSalariosMinimos;
+            
+            // Valor Líquido = Valor Bruto - Descontos
+            const valorLiquido = valorBruto - totalDescontos;
+
+            // Exibir resultados
+            document.getElementById('res-valor-mensal').innerText = formatarMoeda(valorMensal);
+            document.getElementById('res-meses-total').innerText = totalMeses;
+            document.getElementById('res-detalhe-meses').innerText = 
+                `Retroativos: ${mesesRetroativos} | Processo: ${duracaoProcesso}`;
+            document.getElementById('res-total').innerText = formatarMoeda(valorLiquido);
+        }
+
+        function limpar() {
+            limparErros();
+            document.getElementById('salarioEpoca').value = '';
+            document.getElementById('mesesRetroativos').value = '';
+            document.getElementById('duracaoProcesso').value = '18';
+            
+            document.getElementById('res-valor-mensal').innerText = 'R$ 0,00';
+            document.getElementById('res-meses-total').innerText = '0';
+            document.getElementById('res-detalhe-meses').innerText = 'Retroativos: 0 | Processo: 0';
+            document.getElementById('res-total').innerText = 'R$ 0,00';
+        }
+    </script>
+</body>
+</html>
