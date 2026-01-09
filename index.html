@@ -44,13 +44,13 @@
                     <span id="error-salario" class="error-msg">Informe um valor válido.</span>
                 </div>
 
-                <!-- Input Meses de Retroativos -->
+                <!-- Input Data do Acidente -->
                 <div class="flex flex-col">
-                    <label for="mesesRetroativos" class="text-sm font-semibold text-gray-700 mb-2">Meses de Retroativos</label>
-                    <input type="number" id="mesesRetroativos" min="1" max="65" placeholder="Ex: 24"
+                    <label for="dataAcidente" class="text-sm font-semibold text-gray-700 mb-2">Data do Acidente</label>
+                    <input type="date" id="dataAcidente"
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-600">
-                    <span class="text-xs text-gray-500 mt-1">Máximo: 65 meses (5 anos + 13º).</span>
-                    <span id="error-retroativos" class="error-msg">Informe entre 1 e 65 meses.</span>
+                    <span class="text-xs text-gray-500 mt-1">Para cálculo dos retroativos.</span>
+                    <span id="error-dataAcidente" class="error-msg">Informe uma data válida.</span>
                 </div>
 
                 <!-- Input Duração do Processo -->
@@ -101,6 +101,15 @@
 
             </div>
 
+            <!-- Disclaimer -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-start gap-3">
+                <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="text-sm text-yellow-800 font-semibold">📋 Importante: Este é apenas um cálculo estimado</p>
+                    <p class="text-xs text-yellow-700 mt-1">O valor final será definido pelo INSS conforme análise do processo e legislação vigente. Esta calculadora serve apenas como referência.</p>
+                </div>
+            </div>
+
             <!-- Resultados -->
             <div class="space-y-6">
                 
@@ -110,7 +119,7 @@
                         <i data-lucide="clock-3" class="w-5 h-5 text-blue-600"></i>
                         Valores Retroativos (Atrasados)
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         
                         <div class="bg-blue-50 rounded-lg p-5 border border-blue-100">
                             <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Valor Mensal (50%)</span>
@@ -122,18 +131,6 @@
                             <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Total de Meses</span>
                             <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-total">0</div>
                             <div class="text-xs text-gray-400 mt-1" id="res-detalhe-meses">Retroativos: 0 | Processo: 0</div>
-                        </div>
-
-                        <div class="bg-orange-50 rounded-lg p-5 border border-orange-100">
-                            <span class="text-xs font-bold text-orange-800 uppercase tracking-wider">Valor Bruto</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-bruto">R$ 0,00</div>
-                            <div class="text-xs text-gray-500 mt-1">Antes dos descontos</div>
-                        </div>
-
-                        <div class="bg-red-50 rounded-lg p-5 border border-red-100">
-                            <span class="text-xs font-bold text-red-800 uppercase tracking-wider">Descontos</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-descontos">R$ 0,00</div>
-                            <div class="text-xs text-gray-500 mt-1">40% + 4 salários mín.</div>
                         </div>
 
                     </div>
@@ -270,9 +267,25 @@
             span.style.display = 'block';
         };
 
+        const calcularMesesRetroativos = (dataAcidente) => {
+            const hoje = new Date();
+            const acidente = new Date(dataAcidente);
+            
+            let anos = hoje.getFullYear() - acidente.getFullYear();
+            let meses = hoje.getMonth() - acidente.getMonth();
+            
+            if (meses < 0) {
+                anos--;
+                meses += 12;
+            }
+            
+            const totalMeses = (anos * 12) + meses;
+            return totalMeses;
+        };
+
         const limparErros = () => {
-            const inputs = ['salarioEpoca', 'mesesRetroativos', 'duracaoProcesso', 'dataNascimento', 'sexo'];
-            const spans = ['error-salario', 'error-retroativos', 'error-duracao', 'error-nascimento', 'error-sexo'];
+            const inputs = ['salarioEpoca', 'dataAcidente', 'duracaoProcesso', 'dataNascimento', 'sexo'];
+            const spans = ['error-salario', 'error-dataAcidente', 'error-duracao', 'error-nascimento', 'error-sexo'];
             
             inputs.forEach(id => {
                 const el = document.getElementById(id);
@@ -288,19 +301,19 @@
             limparErros();
 
             const salarioInput = document.getElementById('salarioEpoca').value;
-            const mesesRetroativosInput = document.getElementById('mesesRetroativos').value;
+            const dataAcidenteInput = document.getElementById('dataAcidente').value;
             const duracaoProcessoInput = document.getElementById('duracaoProcesso').value;
             const dataNascimentoInput = document.getElementById('dataNascimento').value;
             const sexoInput = document.getElementById('sexo').value;
 
-            if (!salarioInput || !mesesRetroativosInput || !duracaoProcessoInput) {
-                alert("Por favor, preencha os campos obrigatórios (Salário, Meses de Retroativos e Duração do Processo).");
+            if (!salarioInput || !dataAcidenteInput || !duracaoProcessoInput) {
+                alert("Por favor, preencha os campos obrigatórios (Salário, Data do Acidente e Duração do Processo).");
                 return;
             }
 
             const salarioEpoca = parseFloat(salarioInput);
-            const mesesRetroativos = parseInt(mesesRetroativosInput, 10);
             const duracaoProcesso = parseInt(duracaoProcessoInput, 10);
+            const mesesRetroativos = calcularMesesRetroativos(dataAcidenteInput);
 
             let temErro = false;
             
@@ -309,12 +322,12 @@
                 temErro = true;
             }
 
-            if (Number.isNaN(mesesRetroativos) || mesesRetroativos < 1) {
-                mostrarErro('mesesRetroativos', 'error-retroativos', 'Informe pelo menos 1 mês.');
+            if (!dataAcidenteInput || new Date(dataAcidenteInput) > new Date()) {
+                mostrarErro('dataAcidente', 'error-dataAcidente', 'Informe uma data válida no passado.');
                 temErro = true;
             } else if (mesesRetroativos > CONST_MAX_MESES_RETROATIVOS) {
-                mostrarErro('mesesRetroativos', 'error-retroativos', 
-                    `O máximo permitido é ${CONST_MAX_MESES_RETROATIVOS} meses.`);
+                mostrarErro('dataAcidente', 'error-dataAcidente', 
+                    `A data do acidente não pode ser superior a ${CONST_MAX_MESES_RETROATIVOS} meses (5 anos + 13º).`);
                 temErro = true;
             }
 
@@ -354,8 +367,6 @@
             document.getElementById('res-meses-total').innerText = totalMeses;
             document.getElementById('res-detalhe-meses').innerText = 
                 `Retroativos: ${mesesRetroativos} | Processo: ${duracaoProcesso}`;
-            document.getElementById('res-valor-bruto').innerText = formatarMoeda(valorBruto);
-            document.getElementById('res-descontos').innerText = formatarMoeda(totalDescontos);
             document.getElementById('res-total-retroativos').innerText = formatarMoeda(valorLiquidoRetroativos);
 
             // ========== CÁLCULO DOS VINCENDOS (FUTUROS) ==========
@@ -416,7 +427,7 @@
         function limpar() {
             limparErros();
             document.getElementById('salarioEpoca').value = '';
-            document.getElementById('mesesRetroativos').value = '';
+            document.getElementById('dataAcidente').value = '';
             document.getElementById('duracaoProcesso').value = '18';
             document.getElementById('dataNascimento').value = '';
             document.getElementById('sexo').value = '';
@@ -424,8 +435,6 @@
             document.getElementById('res-valor-mensal').innerText = 'R$ 0,00';
             document.getElementById('res-meses-total').innerText = '0';
             document.getElementById('res-detalhe-meses').innerText = 'Retroativos: 0 | Processo: 0';
-            document.getElementById('res-valor-bruto').innerText = 'R$ 0,00';
-            document.getElementById('res-descontos').innerText = 'R$ 0,00';
             document.getElementById('res-total-retroativos').innerText = 'R$ 0,00';
             
             document.getElementById('secao-vincendos').style.display = 'none';
