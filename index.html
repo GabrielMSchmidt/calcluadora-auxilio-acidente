@@ -232,11 +232,10 @@
         document.getElementById('anoAtual').innerText = new Date().getFullYear();
 
         // --- CONSTANTES ---
-        const CONST_SALARIO_MINIMO = 1518.00; // Salário mínimo 2025
+        const CONST_SALARIO_MINIMO = 1621.00; // Salário mínimo vigente
         const CONST_PERCENTUAL_AUXILIO = 0.50; // 50% do salário
-        const CONST_PERCENTUAL_HONORARIOS = 0.40; // 40% de honorários
-        const CONST_MAX_MESES_RETROATIVOS = 65; // 5 anos + 13º salário
-        const CONST_VALOR_MENSAL_VINCENDO = CONST_SALARIO_MINIMO * 0.5; // ½ salário mínimo = R$ 759,00
+        const CONST_PERCENTUAL_HONORARIOS = 0.50; // 50% de honorários
+        const CONST_MAX_MESES_RETRO_CALC = 60; // Limite de 5 anos para cálculo (60 meses)
 
         const formatarMoeda = (valor) => {
             return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
@@ -319,10 +318,6 @@
             if (!dataAcidenteInput || new Date(dataAcidenteInput) > new Date()) {
                 mostrarErro('dataAcidente', 'error-dataAcidente', 'Informe uma data válida no passado.');
                 temErro = true;
-            } else if (mesesRetroativos > CONST_MAX_MESES_RETROATIVOS) {
-                mostrarErro('dataAcidente', 'error-dataAcidente', 
-                    `A data do acidente não pode ser superior a ${CONST_MAX_MESES_RETROATIVOS} meses (5 anos + 13º).`);
-                temErro = true;
             }
 
             if (Number.isNaN(duracaoProcesso) || duracaoProcesso < 1) {
@@ -333,34 +328,31 @@
             if (temErro) return;
 
             // ========== CÁLCULO DOS RETROATIVOS (ATRASADOS) ==========
-            
-            // Se o salário da época for menor que o salário mínimo, usar 50% do salário mínimo
-            let valorMensal;
-            if (salarioEpoca < CONST_SALARIO_MINIMO) {
-                valorMensal = CONST_SALARIO_MINIMO * CONST_PERCENTUAL_AUXILIO;
-            } else {
-                valorMensal = salarioEpoca * CONST_PERCENTUAL_AUXILIO;
-            }
-            
-            // Total de meses = Retroativos + Duração do Processo
-            const totalMeses = mesesRetroativos + duracaoProcesso;
-            
-            // Valor bruto = Valor Mensal (50%) * Total de Meses
-            const valorBruto = valorMensal * totalMeses;
-            
-            // Descontos = 40% dos honorários + 4 salários mínimos
-            const descontoHonorarios = valorBruto * CONST_PERCENTUAL_HONORARIOS;
-            const descontoSalariosMinimos = 4 * CONST_SALARIO_MINIMO;
-            const totalDescontos = descontoHonorarios + descontoSalariosMinimos;
-            
-            // Valor Líquido dos Retroativos = Valor Bruto - Descontos
-            const valorLiquidoRetroativos = valorBruto - totalDescontos;
+
+            // 50% do maior valor entre salário da época e salário mínimo atual
+            const valorMensal = Math.max(salarioEpoca, CONST_SALARIO_MINIMO) * CONST_PERCENTUAL_AUXILIO;
+
+            // Meses retroativos limitados a 5 anos (60 meses) para cálculo
+            const mesesRetroativosCalc = Math.min(mesesRetroativos, CONST_MAX_MESES_RETRO_CALC);
+            const totalMeses = mesesRetroativos + duracaoProcesso; // real, para exibição
+            const totalMesesCalc = mesesRetroativosCalc + duracaoProcesso;
+
+            // Valor bruto = 50% salário × (retroativos [cap 5 anos] + processo) + 50% salário × 13
+            const valorBrutoRetroativos = valorMensal * totalMesesCalc;
+            const valor13Salarios = valorMensal * 13;
+            const valorBrutoTotal = valorBrutoRetroativos + valor13Salarios;
+
+            // Honorários = 50% do valor bruto total
+            const descontoHonorarios = valorBrutoTotal * CONST_PERCENTUAL_HONORARIOS;
+
+            // Valor Líquido dos Retroativos = 50% do bruto total
+            const valorLiquidoRetroativos = valorBrutoTotal - descontoHonorarios;
 
             // Exibir resultados dos retroativos
             document.getElementById('res-valor-mensal').innerText = formatarMoeda(valorMensal);
             document.getElementById('res-meses-total').innerText = totalMeses;
             document.getElementById('res-detalhe-meses').innerText = 
-                `Retroativos: ${mesesRetroativos} | Processo: ${duracaoProcesso}`;
+                `Retroativos: ${mesesRetroativosCalc} | Processo: ${duracaoProcesso}`;
             document.getElementById('res-total-retroativos').innerText = formatarMoeda(valorLiquidoRetroativos);
 
             // ========== CÁLCULO DOS VINCENDOS (FUTUROS) ==========
@@ -391,16 +383,20 @@
                         `Aposentadoria aos ${idadeAposentadoria} anos`;
                     document.getElementById('res-meses-vincendos').innerText = '0 meses';
                     document.getElementById('res-total-vincendos').innerText = 'R$ 0,00';
-                    document.getElementById('res-beneficio-mensal').innerText = formatarMoeda(CONST_VALOR_MENSAL_VINCENDO);
-                    document.getElementById('res-decimo-terceiro').innerText = formatarMoeda(CONST_VALOR_MENSAL_VINCENDO);
+                    const valorMensalVincendoAposentado = Math.max(salarioEpoca * 0.5, CONST_SALARIO_MINIMO * 0.5);
+                    document.getElementById('res-beneficio-mensal').innerText = formatarMoeda(valorMensalVincendoAposentado);
+                    document.getElementById('res-decimo-terceiro').innerText = formatarMoeda(valorMensalVincendoAposentado);
                     return;
                 }
 
                 // Calcular meses vincendos (anos × 13 meses - incluindo 13º)
                 const mesesVincendos = anosRestantes * 13;
-                
+
+                // Benefício mensal: maior entre 50% do salário da época e 50% do salário mínimo
+                const valorMensalVincendo = Math.max(salarioEpoca * 0.5, CONST_SALARIO_MINIMO * 0.5);
+
                 // Calcular valor total vincendo
-                const totalVincendos = mesesVincendos * CONST_VALOR_MENSAL_VINCENDO;
+                const totalVincendos = mesesVincendos * valorMensalVincendo;
 
                 // Exibir resultados dos vincendos
                 document.getElementById('secao-vincendos').style.display = 'block';
@@ -410,8 +406,8 @@
                     `Aposentadoria aos ${idadeAposentadoria} anos`;
                 document.getElementById('res-meses-vincendos').innerText = `${mesesVincendos} meses`;
                 document.getElementById('res-total-vincendos').innerText = formatarMoeda(totalVincendos);
-                document.getElementById('res-beneficio-mensal').innerText = formatarMoeda(CONST_VALOR_MENSAL_VINCENDO);
-                document.getElementById('res-decimo-terceiro').innerText = formatarMoeda(CONST_VALOR_MENSAL_VINCENDO);
+                document.getElementById('res-beneficio-mensal').innerText = formatarMoeda(valorMensalVincendo);
+                document.getElementById('res-decimo-terceiro').innerText = formatarMoeda(valorMensalVincendo);
                 
                 // Recriar ícones do Lucide
                 lucide.createIcons();
