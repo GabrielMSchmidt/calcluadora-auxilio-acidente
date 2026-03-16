@@ -235,7 +235,7 @@
         const CONST_SALARIO_MINIMO = 1621.00; // Salário mínimo vigente
         const CONST_PERCENTUAL_AUXILIO = 0.50; // 50% do salário
         const CONST_PERCENTUAL_HONORARIOS = 0.50; // 50% de honorários
-        const CONST_MAX_MESES_RETRO_CALC = 60; // Limite de 5 anos para cálculo (60 meses)
+        const CONST_MAX_MESES_RETRO_CALC = 65; // Limite de 5 anos para cálculo + 13º (65 meses)
 
         const formatarMoeda = (valor) => {
             return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
@@ -350,9 +350,9 @@
 
             // Exibir resultados dos retroativos
             document.getElementById('res-valor-mensal').innerText = formatarMoeda(valorMensal);
-            document.getElementById('res-meses-total').innerText = totalMeses;
+            document.getElementById('res-meses-total').innerText = totalMesesCalc;
             document.getElementById('res-detalhe-meses').innerText = 
-                `Retroativos: ${mesesRetroativos} | Processo: ${duracaoProcesso}`;
+                `Retroativos: ${mesesRetroativosCalc} | Processo: ${duracaoProcesso}`;
             document.getElementById('res-total-retroativos').innerText = formatarMoeda(valorLiquidoRetroativos);
 
             // ========== CÁLCULO DOS VINCENDOS (FUTUROS) ==========
