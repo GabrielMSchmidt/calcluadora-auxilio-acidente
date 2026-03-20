@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
         body { font-family: 'Inter', sans-serif; }
         .error-msg { font-size: 0.75rem; color: #ef4444; margin-top: 0.25rem; display: none; }
@@ -16,23 +15,19 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
-    <!-- Cabeçalho -->
     <header class="w-full bg-white shadow-sm py-6">
         <div class="max-w-5xl mx-auto px-6">
             <h1 class="text-2xl font-bold text-gray-900">Calculadora de Auxílio Acidente</h1>
-            <p class="text-gray-500 text-sm mt-1">Estimativa do valor de Auxílio Acidente a receber.</p>
+            <p class="text-gray-500 text-sm mt-1">Estimativa de retroativos, parcelas futuras e proveito econômico.</p>
         </div>
     </header>
 
-    <!-- Conteúdo Principal -->
-    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-10">
-        
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8">
-            
-            <!-- Inputs e Botões -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                
-                <!-- Input Salário da Época -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-10 space-y-8">
+        <section class="bg-white rounded-xl shadow-lg border border-gray-100 p-6 md:p-8">
+            <h2 class="text-lg font-bold text-gray-900 mb-1">Dados do Cliente</h2>
+            <p class="text-sm text-gray-500 mb-6">Preencha as informações para simular os valores.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="flex flex-col">
                     <label for="salarioEpoca" class="text-sm font-semibold text-gray-700 mb-2">Salário da Época (R$)</label>
                     <div class="relative">
@@ -44,7 +39,6 @@
                     <span id="error-salario" class="error-msg">Informe um valor válido.</span>
                 </div>
 
-                <!-- Input Data do Acidente -->
                 <div class="flex flex-col">
                     <label for="dataAcidente" class="text-sm font-semibold text-gray-700 mb-2">Data do Acidente</label>
                     <input type="date" id="dataAcidente"
@@ -53,7 +47,6 @@
                     <span id="error-dataAcidente" class="error-msg">Informe uma data válida.</span>
                 </div>
 
-                <!-- Input Duração do Processo -->
                 <div class="flex flex-col">
                     <label for="duracaoProcesso" class="text-sm font-semibold text-gray-700 mb-2">Duração do Processo (meses)</label>
                     <input type="number" id="duracaoProcesso" min="1" placeholder="Ex: 18" value="18"
@@ -62,154 +55,219 @@
                     <span id="error-duracao" class="error-msg">Informe um número válido.</span>
                 </div>
 
-                <!-- Input Data de Nascimento -->
                 <div class="flex flex-col">
                     <label for="dataNascimento" class="text-sm font-semibold text-gray-700 mb-2">Data de Nascimento</label>
                     <input type="date" id="dataNascimento"
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-600">
-                    <span class="text-xs text-gray-500 mt-1">Para cálculo dos valores vincendos.</span>
+                    <span class="text-xs text-gray-500 mt-1">Opcional: para cálculo dos vincendos.</span>
                     <span id="error-nascimento" class="error-msg">Informe uma data válida.</span>
                 </div>
 
-                <!-- Input Idade de Aposentadoria -->
                 <div class="flex flex-col">
                     <label for="idadeAposentadoria" class="text-sm font-semibold text-gray-700 mb-2">Idade de Aposentadoria</label>
                     <input type="number" id="idadeAposentadoria" min="55" max="75" placeholder="Ex: 65" value="65"
                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-gray-600">
-                    <span class="text-xs text-gray-500 mt-1">Idade em que se aposentará.</span>
+                    <span class="text-xs text-gray-500 mt-1">Opcional: usada junto com a data de nascimento.</span>
                     <span id="error-idadeAposentadoria" class="error-msg">Informe uma idade válida.</span>
                 </div>
 
-                <!-- Botões -->
                 <div class="flex flex-row items-end gap-2 w-full md:pb-6">
-                    <button onclick="calcular()" 
+                    <button onclick="calcular()"
                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-md flex items-center justify-center gap-2">
                         <i data-lucide="calculator" class="w-4 h-4"></i>
                         Calcular
                     </button>
-                    
-                    <button onclick="limpar()" 
+
+                    <button onclick="limpar()"
                         class="flex-1 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                         Limpar
                     </button>
                 </div>
-
             </div>
+        </section>
 
-            <!-- Disclaimer -->
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-                <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
-                <div>
-                    <p class="text-sm text-yellow-800 font-semibold">📋 Importante: Este é apenas um cálculo estimado</p>
-                    <p class="text-xs text-yellow-700 mt-1">O valor final será definido pelo INSS conforme análise do processo e legislação vigente. Esta calculadora serve apenas como referência.</p>
+        <section id="bloco-resultados" style="display: none;" class="space-y-6">
+            <div class="bg-red-50 rounded-xl shadow-sm border border-red-200 p-6">
+                <h3 class="text-lg font-bold text-red-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-red-600"></i>
+                    Valores já prescritos (perdidos)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-lg p-4 border border-red-100">
+                        <span class="text-xs font-bold text-red-700 uppercase tracking-wider">Parcelas perdidas</span>
+                        <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-prescritos">0</div>
+                        <div class="text-xs text-gray-500 mt-1">meses fora da janela dos 5 anos</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-red-100">
+                        <span class="text-xs font-bold text-red-700 uppercase tracking-wider">Total já perdido</span>
+                        <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-prescrito-total">R$ 0,00</div>
+                        <div class="text-xs text-gray-500 mt-1">valor não recuperável pela prescrição</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-red-100">
+                        <span class="text-xs font-bold text-red-700 uppercase tracking-wider">Perda mensal sem ação</span>
+                        <div class="mt-2 text-2xl font-bold text-gray-900" id="res-perda-mensal">R$ 0,00</div>
+                        <div class="text-xs text-gray-500 mt-1">estimativa de perda por mês</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Resultados -->
-            <div class="space-y-6">
-                
-                <!-- Seção: Valores Retroativos (Atrasados) -->
-                <div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i data-lucide="clock-3" class="w-5 h-5 text-blue-600"></i>
-                        Valores Retroativos (Atrasados)
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
-                        <div class="bg-blue-50 rounded-lg p-5 border border-blue-100">
-                            <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Valor Mensal (50%)</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-mensal">R$ 0,00</div>
-                            <div class="text-xs text-gray-500 mt-1">50% do salário</div>
-                        </div>
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-1">O que você tem a receber</h3>
+                <p class="text-sm text-gray-500 mb-6">Visão consolidada dos atrasados e parcelas futuras.</p>
 
-                        <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
-                            <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Total de Meses</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-total">0</div>
-                            <div class="text-xs text-gray-400 mt-1" id="res-detalhe-meses">Retroativos: 0 | Processo: 0</div>
-                        </div>
-
-                    </div>
-
-                    <!-- Valor Líquido dos Retroativos -->
-                    <div class="mt-4 bg-gray-900 rounded-lg p-6 border border-gray-800 text-white shadow-lg">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Valor Líquido (Retroativos)</span>
-                                <div class="mt-1 text-3xl font-bold text-white" id="res-total-retroativos">R$ 0,00</div>
-                                <div class="text-xs text-gray-400 mt-1">Você receberá de uma vez (já com descontos)</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Seção: Valores Vincendos (Futuros) -->
-                <div id="secao-vincendos" style="display: none;">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i>
-                        Valores Vincendos (Até a Aposentadoria)
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        
-                        <div class="bg-green-50 rounded-lg p-5 border border-green-100">
-                            <span class="text-xs font-bold text-green-800 uppercase tracking-wider">Idade Atual</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-idade-atual">0 anos</div>
-                            <div class="text-xs text-gray-500 mt-1">Calculado pela data de nascimento</div>
-                        </div>
-
-                        <div class="bg-green-50 rounded-lg p-5 border border-green-100">
-                            <span class="text-xs font-bold text-green-800 uppercase tracking-wider">Faltam para Aposentadoria</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-anos-restantes">0 anos</div>
-                            <div class="text-xs text-gray-500 mt-1" id="res-info-aposentadoria">Aposentadoria aos 65 anos</div>
-                        </div>
-
-                        <div class="bg-green-50 rounded-lg p-5 border border-green-100">
-                            <span class="text-xs font-bold text-green-800 uppercase tracking-wider">Total de Meses</span>
-                            <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-vincendos">0 meses</div>
-                            <div class="text-xs text-gray-500 mt-1">Incluindo 13º salários</div>
-                        </div>
-
-                    </div>
-
-                    <!-- Valor Total Vincendo -->
-                    <div class="mt-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg p-6 border border-green-500 text-white shadow-lg">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-xs font-bold text-green-100 uppercase tracking-wider">Valor Total Vincendo</span>
-                                <div class="mt-1 text-3xl font-bold text-white" id="res-total-vincendos">R$ 0,00</div>
-                                <div class="text-xs text-green-100 mt-1">Valor total que receberá até se aposentar (sem descontos)</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Simulação de Recebimento Mensal -->
-                    <div class="mt-4 bg-white rounded-lg p-6 border border-gray-200">
-                        <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-                            <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
-                            Simulação de Recebimento Mensal Futuro
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="clock-3" class="w-5 h-5 text-blue-600"></i>
+                            Valores Retroativos (Atrasados)
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
-                                <span class="text-sm text-gray-600">Benefício Mensal:</span>
-                                <span class="text-lg font-bold text-gray-900" id="res-beneficio-mensal">R$ 759,00</span>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-blue-50 rounded-lg p-5 border border-blue-100">
+                                <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Valor mensal (50%)</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-mensal">R$ 0,00</div>
+                                <div class="text-xs text-gray-500 mt-1">base usada nos cálculos</div>
                             </div>
-                            <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
-                                <span class="text-sm text-gray-600">13º Salário Anual:</span>
-                                <span class="text-lg font-bold text-gray-900" id="res-decimo-terceiro">R$ 759,00</span>
+                            <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                                <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Meses do acidente (cap 65)</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-retroativos-calc">0</div>
+                                <div class="text-xs text-gray-400 mt-1" id="res-detalhe-retroativos">Total desde acidente: 0 meses</div>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                                <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Meses de processo</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-processo">0</div>
+                                <div class="text-xs text-gray-400 mt-1">duração informada</div>
                             </div>
                         </div>
-                        <p class="text-xs text-gray-500 mt-3 text-center">
-                            💡 Você receberá estes valores mensalmente (sem descontos) até a aposentadoria
-                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div class="bg-white rounded-lg p-5 border border-blue-100">
+                                <span class="text-xs font-bold text-blue-700 uppercase tracking-wider">Retroativo do acidente</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-retro-acidente">R$ 0,00</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-5 border border-indigo-100">
+                                <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Retroativo do processo</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-valor-retro-processo">R$ 0,00</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-gray-900 rounded-lg p-6 border border-gray-800 text-white shadow-lg">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total dos Retroativos (sem desconto)</span>
+                            <div class="mt-1 text-3xl font-bold text-white" id="res-total-retroativos-bruto">R$ 0,00</div>
+                            <div class="text-xs text-gray-400 mt-1">soma de retroativos do acidente + tempo de processo</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-5 h-5 text-green-600"></i>
+                            Valores Vincendos (Até a Aposentadoria)
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-green-50 rounded-lg p-5 border border-green-100">
+                                <span class="text-xs font-bold text-green-800 uppercase tracking-wider">Idade atual</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-idade-atual">0 anos</div>
+                                <div class="text-xs text-gray-500 mt-1">calculado pela data de nascimento</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-5 border border-green-100">
+                                <span class="text-xs font-bold text-green-800 uppercase tracking-wider">Faltam para aposentar</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-anos-restantes">0 anos</div>
+                                <div class="text-xs text-gray-500 mt-1" id="res-info-aposentadoria">Aposentadoria aos 65 anos</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-5 border border-green-100">
+                                <span class="text-xs font-bold text-green-800 uppercase tracking-wider">Total de parcelas futuras</span>
+                                <div class="mt-2 text-2xl font-bold text-gray-900" id="res-meses-vincendos">0 meses</div>
+                                <div class="text-xs text-gray-500 mt-1">incluindo 13º salários</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg p-6 border border-green-500 text-white shadow-lg">
+                            <span class="text-xs font-bold text-green-100 uppercase tracking-wider">Valor Total Vincendo</span>
+                            <div class="mt-1 text-3xl font-bold text-white" id="res-total-vincendos">R$ 0,00</div>
+                            <div class="text-xs text-green-100 mt-1">valor total até a aposentadoria (sem descontos)</div>
+                        </div>
+
+                        <div class="mt-4 bg-white rounded-lg p-6 border border-gray-200">
+                            <h5 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
+                                Simulação de Recebimento Mensal Futuro
+                            </h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                                    <span class="text-sm text-gray-600">Benefício Mensal:</span>
+                                    <span class="text-lg font-bold text-gray-900" id="res-beneficio-mensal">R$ 0,00</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                                    <span class="text-sm text-gray-600">13º Salário Anual:</span>
+                                    <span class="text-lg font-bold text-gray-900" id="res-decimo-terceiro">R$ 0,00</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3 text-center" id="res-aviso-vincendos">
+                                Preencha data de nascimento e idade de aposentadoria para exibir esta projeção.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-1">Investimento no Processo</h3>
+                <p class="text-sm text-gray-500 mb-4">Distribuição dos retroativos e visão de honorários.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bg-blue-50 rounded-lg p-5 border border-blue-100">
+                        <span class="text-xs font-bold text-blue-800 uppercase tracking-wider">Parcela única para você (50%)</span>
+                        <div class="mt-2 text-2xl font-bold text-gray-900" id="res-cliente-parcela-unica">R$ 0,00</div>
+                        <div class="text-xs text-gray-500 mt-1">sobre o total dos retroativos</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-5 border border-purple-100">
+                        <span class="text-xs font-bold text-purple-800 uppercase tracking-wider">Honorários principais (50%)</span>
+                        <div class="mt-2 text-2xl font-bold text-gray-900" id="res-honorarios-principais">R$ 0,00</div>
+                        <div class="text-xs text-gray-500 mt-1">sobre o total dos retroativos</div>
                     </div>
                 </div>
 
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
+                    Além do valor acima, será cobrado o equivalente a 50% de uma anuidade das parcelas futuras (<span id="res-honorarios-anuidade">R$ 0,00</span>), valor que corresponde a apenas 13 das suas parcelas mensais.
+                </div>
+
+                <button id="btn-toggle-proveito" type="button" class="mt-4 text-blue-700 hover:text-blue-800 text-sm font-semibold underline underline-offset-2">
+                    Ver visão detalhada do proveito econômico
+                </button>
+
+                <div id="bloco-proveito-detalhado" style="display: none;" class="mt-4 bg-gray-50 rounded-lg border border-gray-200 p-5 space-y-3">
+                    <h4 class="text-base font-bold text-gray-900">Visão Completa — Proveito Econômico</h4>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">Valores atrasados</span>
+                        <span class="font-semibold text-gray-900" id="res-proveito-retroativos">R$ 0,00</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-600">Parcelas futuras até a aposentadoria</span>
+                        <span class="font-semibold text-gray-900" id="res-proveito-vincendos">R$ 0,00</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm border-t border-gray-200 pt-3">
+                        <span class="text-gray-700 font-semibold">Proveito Econômico Total</span>
+                        <span class="font-bold text-gray-900" id="res-proveito-total">R$ 0,00</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-700 font-semibold">Total de Honorários Cobrados</span>
+                        <span class="font-bold text-gray-900" id="res-honorarios-totais">R$ 0,00</span>
+                    </div>
+                    <p class="text-xs text-gray-600" id="res-percentual-proveito">Apenas 0,00% do seu proveito econômico total.</p>
+                    <p class="text-xs text-gray-700 font-medium" id="res-retorno-por-real">Para cada R$ 1,00 investido em honorários, você recebe R$ 0,00 em benefícios.</p>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-start gap-3">
+            <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+            <div>
+                <p class="text-sm text-yellow-800 font-semibold">Importante: Este é apenas um cálculo estimado</p>
+                <p class="text-xs text-yellow-700 mt-1">O valor final será definido pelo INSS conforme análise do processo e legislação vigente. Esta calculadora serve apenas como referência.</p>
+            </div>
+        </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 mt-auto py-8">
         <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center md:justify-between gap-6 w-full">
             <div class="flex items-center gap-3">
@@ -231,14 +289,19 @@
         lucide.createIcons();
         document.getElementById('anoAtual').innerText = new Date().getFullYear();
 
-        // --- CONSTANTES ---
-        const CONST_SALARIO_MINIMO = 1621.00; // Salário mínimo vigente
-        const CONST_PERCENTUAL_AUXILIO = 0.50; // 50% do salário
-        const CONST_PERCENTUAL_HONORARIOS = 0.50; // 50% de honorários
-        const CONST_MAX_MESES_RETRO_CALC = 65; // Limite de 5 anos para cálculo + 13º (65 meses)
+        const CONST_SALARIO_MINIMO = 1621.00;
+        const CONST_PERCENTUAL_AUXILIO = 0.50;
+        const CONST_PERCENTUAL_HONORARIOS = 0.50;
+        const CONST_MAX_MESES_RETRO_CALC = 65;
+
+        let proveitoExpandido = false;
 
         const formatarMoeda = (valor) => {
             return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+        };
+
+        const formatarPercentual = (valor) => {
+            return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(valor);
         };
 
         const calcularIdade = (dataNascimento) => {
@@ -252,6 +315,21 @@
             return idade;
         };
 
+        const calcularMesesRetroativos = (dataAcidente) => {
+            const hoje = new Date();
+            const acidente = new Date(dataAcidente);
+
+            let anos = hoje.getFullYear() - acidente.getFullYear();
+            let meses = hoje.getMonth() - acidente.getMonth();
+
+            if (meses < 0) {
+                anos--;
+                meses += 12;
+            }
+
+            return (anos * 12) + meses;
+        };
+
         const mostrarErro = (inputId, msgId, mensagem) => {
             const input = document.getElementById(inputId);
             const span = document.getElementById(msgId);
@@ -260,26 +338,10 @@
             span.style.display = 'block';
         };
 
-        const calcularMesesRetroativos = (dataAcidente) => {
-            const hoje = new Date();
-            const acidente = new Date(dataAcidente);
-            
-            let anos = hoje.getFullYear() - acidente.getFullYear();
-            let meses = hoje.getMonth() - acidente.getMonth();
-            
-            if (meses < 0) {
-                anos--;
-                meses += 12;
-            }
-            
-            const totalMeses = (anos * 12) + meses;
-            return totalMeses;
-        };
-
         const limparErros = () => {
             const inputs = ['salarioEpoca', 'dataAcidente', 'duracaoProcesso', 'dataNascimento', 'idadeAposentadoria'];
             const spans = ['error-salario', 'error-dataAcidente', 'error-duracao', 'error-nascimento', 'error-idadeAposentadoria'];
-            
+
             inputs.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('input-error');
@@ -289,6 +351,25 @@
                 if (el) el.style.display = 'none';
             });
         };
+
+        const setTexto = (id, valor) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = valor;
+        };
+
+        const atualizarToggleProveito = () => {
+            const botao = document.getElementById('btn-toggle-proveito');
+            const bloco = document.getElementById('bloco-proveito-detalhado');
+            bloco.style.display = proveitoExpandido ? 'block' : 'none';
+            botao.innerText = proveitoExpandido
+                ? 'Ocultar visão detalhada do proveito econômico'
+                : 'Ver visão detalhada do proveito econômico';
+        };
+
+        document.getElementById('btn-toggle-proveito').addEventListener('click', () => {
+            proveitoExpandido = !proveitoExpandido;
+            atualizarToggleProveito();
+        });
 
         function calcular() {
             limparErros();
@@ -300,121 +381,116 @@
             const idadeAposentadoriaInput = document.getElementById('idadeAposentadoria').value;
 
             if (!salarioInput || !dataAcidenteInput || !duracaoProcessoInput) {
-                alert("Por favor, preencha os campos obrigatórios (Salário, Data do Acidente e Duração do Processo).");
+                alert('Por favor, preencha os campos obrigatórios (Salário, Data do Acidente e Duração do Processo).');
                 return;
             }
 
             const salarioEpoca = parseFloat(salarioInput);
             const duracaoProcesso = parseInt(duracaoProcessoInput, 10);
-            const mesesRetroativos = calcularMesesRetroativos(dataAcidenteInput);
+            const mesesDesdeAcidente = calcularMesesRetroativos(dataAcidenteInput);
 
             let temErro = false;
-            
             if (salarioEpoca <= 0 || Number.isNaN(salarioEpoca)) {
                 mostrarErro('salarioEpoca', 'error-salario', 'Informe um valor válido maior que zero.');
                 temErro = true;
             }
-
             if (!dataAcidenteInput || new Date(dataAcidenteInput) > new Date()) {
                 mostrarErro('dataAcidente', 'error-dataAcidente', 'Informe uma data válida no passado.');
                 temErro = true;
             }
-
             if (Number.isNaN(duracaoProcesso) || duracaoProcesso < 1) {
                 mostrarErro('duracaoProcesso', 'error-duracao', 'Informe um número válido de meses.');
                 temErro = true;
             }
-
             if (temErro) return;
 
-            // ========== CÁLCULO DOS RETROATIVOS (ATRASADOS) ==========
-
-            // 50% do maior valor entre salário da época e salário mínimo atual
             const valorMensal = Math.max(salarioEpoca, CONST_SALARIO_MINIMO) * CONST_PERCENTUAL_AUXILIO;
+            const mesesRetroativosCalc = Math.min(mesesDesdeAcidente, CONST_MAX_MESES_RETRO_CALC);
+            const mesesPrescritos = Math.max(mesesDesdeAcidente - CONST_MAX_MESES_RETRO_CALC, 0);
 
-            // Meses retroativos limitados a 5 anos (60 meses) para cálculo
-            const mesesRetroativosCalc = Math.min(mesesRetroativos, CONST_MAX_MESES_RETRO_CALC);
-            const totalMeses = mesesRetroativos + duracaoProcesso; // real, para exibição
-            const totalMesesCalc = mesesRetroativosCalc + duracaoProcesso;
+            const valorPrescritoTotal = mesesPrescritos * valorMensal;
+            const valorRetroAcidente = mesesRetroativosCalc * valorMensal;
+            const valorRetroProcesso = duracaoProcesso * valorMensal;
+            const valorRetroativosTotal = valorRetroAcidente + valorRetroProcesso;
 
-            // Valor bruto = 50% salário × (retroativos [cap 5 anos] + processo) + 50% salário × 13
-            const valorBrutoRetroativos = valorMensal * totalMesesCalc;
-            const valor13Salarios = valorMensal * 13;
-            const valorBrutoTotal = valorBrutoRetroativos + valor13Salarios;
+            const honorariosPrincipais = valorRetroativosTotal * CONST_PERCENTUAL_HONORARIOS;
+            const clienteParcelaUnica = valorRetroativosTotal - honorariosPrincipais;
+            const honorariosAnuidade = 13 * valorMensal * CONST_PERCENTUAL_HONORARIOS;
 
-            // Honorários = 50% do valor bruto total
-            const descontoHonorarios = valorBrutoTotal * CONST_PERCENTUAL_HONORARIOS;
+            let totalVincendos = 0;
+            let valorMensalVincendo = Math.max(salarioEpoca * 0.5, CONST_SALARIO_MINIMO * 0.5);
+            let mesesVincendos = 0;
+            let idadeAtual = 0;
+            let anosRestantes = 0;
+            let mensagemVincendos = 'Preencha data de nascimento e idade de aposentadoria para exibir esta projeção.';
 
-            // Valor Líquido dos Retroativos = 50% do bruto total
-            const valorLiquidoRetroativos = valorBrutoTotal - descontoHonorarios;
-
-            // Exibir resultados dos retroativos
-            document.getElementById('res-valor-mensal').innerText = formatarMoeda(valorMensal);
-            document.getElementById('res-meses-total').innerText = totalMesesCalc;
-            document.getElementById('res-detalhe-meses').innerText = 
-                `Retroativos: ${mesesRetroativosCalc} | Processo: ${duracaoProcesso}`;
-            document.getElementById('res-total-retroativos').innerText = formatarMoeda(valorLiquidoRetroativos);
-
-            // ========== CÁLCULO DOS VINCENDOS (FUTUROS) ==========
-            
-            // Verificar se foram informados data de nascimento e idade de aposentadoria
             if (dataNascimentoInput && idadeAposentadoriaInput) {
-                const idadeAtual = calcularIdade(dataNascimentoInput);
-                
+                idadeAtual = calcularIdade(dataNascimentoInput);
                 if (idadeAtual < 0 || idadeAtual > 120) {
                     mostrarErro('dataNascimento', 'error-nascimento', 'Data de nascimento inválida.');
                     return;
                 }
 
                 const idadeAposentadoria = parseInt(idadeAposentadoriaInput, 10);
-                
                 if (Number.isNaN(idadeAposentadoria) || idadeAposentadoria < 40 || idadeAposentadoria > 80) {
                     mostrarErro('idadeAposentadoria', 'error-idadeAposentadoria', 'Informe uma idade entre 40 e 80 anos.');
                     return;
                 }
 
-                const anosRestantes = idadeAposentadoria - idadeAtual;
+                anosRestantes = idadeAposentadoria - idadeAtual;
+                setTexto('res-info-aposentadoria', `Aposentadoria aos ${idadeAposentadoria} anos`);
 
-                if (anosRestantes <= 0) {
-                    document.getElementById('secao-vincendos').style.display = 'block';
-                    document.getElementById('res-idade-atual').innerText = `${idadeAtual} anos`;
-                    document.getElementById('res-anos-restantes').innerText = 'Já aposentado';
-                    document.getElementById('res-info-aposentadoria').innerText = 
-                        `Aposentadoria aos ${idadeAposentadoria} anos`;
-                    document.getElementById('res-meses-vincendos').innerText = '0 meses';
-                    document.getElementById('res-total-vincendos').innerText = 'R$ 0,00';
-                    const valorMensalVincendoAposentado = Math.max(salarioEpoca * 0.5, CONST_SALARIO_MINIMO * 0.5);
-                    document.getElementById('res-beneficio-mensal').innerText = formatarMoeda(valorMensalVincendoAposentado);
-                    document.getElementById('res-decimo-terceiro').innerText = formatarMoeda(valorMensalVincendoAposentado);
-                    return;
+                if (anosRestantes > 0) {
+                    mesesVincendos = anosRestantes * 13;
+                    totalVincendos = mesesVincendos * valorMensalVincendo;
+                    mensagemVincendos = 'Você receberá estes valores mensalmente (sem descontos) até a aposentadoria.';
+                    setTexto('res-anos-restantes', `${anosRestantes} anos`);
+                } else {
+                    mensagemVincendos = 'Cliente já está na idade de aposentadoria para esta simulação.';
+                    setTexto('res-anos-restantes', 'Já aposentado');
                 }
-
-                // Calcular meses vincendos (anos × 13 meses - incluindo 13º)
-                const mesesVincendos = anosRestantes * 13;
-
-                // Benefício mensal: maior entre 50% do salário da época e 50% do salário mínimo
-                const valorMensalVincendo = Math.max(salarioEpoca * 0.5, CONST_SALARIO_MINIMO * 0.5);
-
-                // Calcular valor total vincendo
-                const totalVincendos = mesesVincendos * valorMensalVincendo;
-
-                // Exibir resultados dos vincendos
-                document.getElementById('secao-vincendos').style.display = 'block';
-                document.getElementById('res-idade-atual').innerText = `${idadeAtual} anos`;
-                document.getElementById('res-anos-restantes').innerText = `${anosRestantes} anos`;
-                document.getElementById('res-info-aposentadoria').innerText = 
-                    `Aposentadoria aos ${idadeAposentadoria} anos`;
-                document.getElementById('res-meses-vincendos').innerText = `${mesesVincendos} meses`;
-                document.getElementById('res-total-vincendos').innerText = formatarMoeda(totalVincendos);
-                document.getElementById('res-beneficio-mensal').innerText = formatarMoeda(valorMensalVincendo);
-                document.getElementById('res-decimo-terceiro').innerText = formatarMoeda(valorMensalVincendo);
-                
-                // Recriar ícones do Lucide
-                lucide.createIcons();
             } else {
-                // Se não informou data de nascimento e idade de aposentadoria, ocultar seção de vincendos
-                document.getElementById('secao-vincendos').style.display = 'none';
+                setTexto('res-info-aposentadoria', 'Aposentadoria aos 65 anos');
+                setTexto('res-anos-restantes', '0 anos');
             }
+
+            const proveitoTotal = valorRetroativosTotal + totalVincendos;
+            const honorariosTotais = honorariosPrincipais + honorariosAnuidade;
+            const percentualHonorarios = proveitoTotal > 0 ? (honorariosTotais / proveitoTotal) * 100 : 0;
+            const retornoPorReal = honorariosTotais > 0 ? (proveitoTotal / honorariosTotais) : 0;
+
+            setTexto('res-meses-prescritos', `${mesesPrescritos}`);
+            setTexto('res-valor-prescrito-total', formatarMoeda(valorPrescritoTotal));
+            setTexto('res-perda-mensal', formatarMoeda(valorMensal));
+
+            setTexto('res-valor-mensal', formatarMoeda(valorMensal));
+            setTexto('res-meses-retroativos-calc', `${mesesRetroativosCalc}`);
+            setTexto('res-meses-processo', `${duracaoProcesso}`);
+            setTexto('res-detalhe-retroativos', `Total desde acidente: ${mesesDesdeAcidente} meses`);
+            setTexto('res-valor-retro-acidente', formatarMoeda(valorRetroAcidente));
+            setTexto('res-valor-retro-processo', formatarMoeda(valorRetroProcesso));
+            setTexto('res-total-retroativos-bruto', formatarMoeda(valorRetroativosTotal));
+
+            setTexto('res-idade-atual', `${idadeAtual} anos`);
+            setTexto('res-meses-vincendos', `${mesesVincendos} meses`);
+            setTexto('res-total-vincendos', formatarMoeda(totalVincendos));
+            setTexto('res-beneficio-mensal', formatarMoeda(valorMensalVincendo));
+            setTexto('res-decimo-terceiro', formatarMoeda(valorMensalVincendo));
+            setTexto('res-aviso-vincendos', mensagemVincendos);
+
+            setTexto('res-cliente-parcela-unica', formatarMoeda(clienteParcelaUnica));
+            setTexto('res-honorarios-principais', formatarMoeda(honorariosPrincipais));
+            setTexto('res-honorarios-anuidade', formatarMoeda(honorariosAnuidade));
+
+            setTexto('res-proveito-retroativos', formatarMoeda(valorRetroativosTotal));
+            setTexto('res-proveito-vincendos', formatarMoeda(totalVincendos));
+            setTexto('res-proveito-total', formatarMoeda(proveitoTotal));
+            setTexto('res-honorarios-totais', formatarMoeda(honorariosTotais));
+            setTexto('res-percentual-proveito', `Apenas ${formatarPercentual(percentualHonorarios)}% do seu proveito econômico total.`);
+            setTexto('res-retorno-por-real', `Para cada R$ 1,00 investido em honorários, você recebe R$ ${formatarPercentual(retornoPorReal)} em benefícios.`);
+
+            document.getElementById('bloco-resultados').style.display = 'block';
+            lucide.createIcons();
         }
 
         function limpar() {
@@ -424,14 +500,45 @@
             document.getElementById('duracaoProcesso').value = '18';
             document.getElementById('dataNascimento').value = '';
             document.getElementById('idadeAposentadoria').value = '65';
-            
-            document.getElementById('res-valor-mensal').innerText = 'R$ 0,00';
-            document.getElementById('res-meses-total').innerText = '0';
-            document.getElementById('res-detalhe-meses').innerText = 'Retroativos: 0 | Processo: 0';
-            document.getElementById('res-total-retroativos').innerText = 'R$ 0,00';
-            
-            document.getElementById('secao-vincendos').style.display = 'none';
+
+            setTexto('res-meses-prescritos', '0');
+            setTexto('res-valor-prescrito-total', 'R$ 0,00');
+            setTexto('res-perda-mensal', 'R$ 0,00');
+
+            setTexto('res-valor-mensal', 'R$ 0,00');
+            setTexto('res-meses-retroativos-calc', '0');
+            setTexto('res-meses-processo', '0');
+            setTexto('res-detalhe-retroativos', 'Total desde acidente: 0 meses');
+            setTexto('res-valor-retro-acidente', 'R$ 0,00');
+            setTexto('res-valor-retro-processo', 'R$ 0,00');
+            setTexto('res-total-retroativos-bruto', 'R$ 0,00');
+
+            setTexto('res-idade-atual', '0 anos');
+            setTexto('res-anos-restantes', '0 anos');
+            setTexto('res-info-aposentadoria', 'Aposentadoria aos 65 anos');
+            setTexto('res-meses-vincendos', '0 meses');
+            setTexto('res-total-vincendos', 'R$ 0,00');
+            setTexto('res-beneficio-mensal', 'R$ 0,00');
+            setTexto('res-decimo-terceiro', 'R$ 0,00');
+            setTexto('res-aviso-vincendos', 'Preencha data de nascimento e idade de aposentadoria para exibir esta projeção.');
+
+            setTexto('res-cliente-parcela-unica', 'R$ 0,00');
+            setTexto('res-honorarios-principais', 'R$ 0,00');
+            setTexto('res-honorarios-anuidade', 'R$ 0,00');
+
+            setTexto('res-proveito-retroativos', 'R$ 0,00');
+            setTexto('res-proveito-vincendos', 'R$ 0,00');
+            setTexto('res-proveito-total', 'R$ 0,00');
+            setTexto('res-honorarios-totais', 'R$ 0,00');
+            setTexto('res-percentual-proveito', 'Apenas 0,00% do seu proveito econômico total.');
+            setTexto('res-retorno-por-real', 'Para cada R$ 1,00 investido em honorários, você recebe R$ 0,00 em benefícios.');
+
+            proveitoExpandido = false;
+            atualizarToggleProveito();
+            document.getElementById('bloco-resultados').style.display = 'none';
         }
+
+        atualizarToggleProveito();
     </script>
 </body>
 </html>
