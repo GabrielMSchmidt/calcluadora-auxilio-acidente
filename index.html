@@ -338,6 +338,15 @@
             span.style.display = 'block';
         };
 
+        // Campos <input type="date"> devolvem string vazia quando o usuário digita
+        // uma data que não existe no calendário (ex.: 30/02/2023) ou deixa a data
+        // incompleta. Nesses casos o navegador marca validity.badInput, o que
+        // permite distinguir "campo em branco" de "data inválida".
+        const dataIncompleta = (inputId) => {
+            const input = document.getElementById(inputId);
+            return !!(input && input.validity && input.validity.badInput);
+        };
+
         const limparErros = () => {
             const inputs = ['salarioEpoca', 'dataAcidente', 'duracaoProcesso', 'dataNascimento', 'idadeAposentadoria'];
             const spans = ['error-salario', 'error-dataAcidente', 'error-duracao', 'error-nascimento', 'error-idadeAposentadoria'];
@@ -380,26 +389,37 @@
             const dataNascimentoInput = document.getElementById('dataNascimento').value;
             const idadeAposentadoriaInput = document.getElementById('idadeAposentadoria').value;
 
-            if (!salarioInput || !dataAcidenteInput || !duracaoProcessoInput) {
-                alert('Por favor, preencha os campos obrigatórios (Salário, Data do Acidente e Duração do Processo).');
-                return;
-            }
-
             const salarioEpoca = parseFloat(salarioInput);
             const duracaoProcesso = parseInt(duracaoProcessoInput, 10);
             const mesesDesdeAcidente = calcularMesesRetroativos(dataAcidenteInput);
 
             let temErro = false;
-            if (salarioEpoca <= 0 || Number.isNaN(salarioEpoca)) {
+            if (!salarioInput) {
+                mostrarErro('salarioEpoca', 'error-salario', 'Campo obrigatório: informe o salário da época.');
+                temErro = true;
+            } else if (salarioEpoca <= 0 || Number.isNaN(salarioEpoca)) {
                 mostrarErro('salarioEpoca', 'error-salario', 'Informe um valor válido maior que zero.');
                 temErro = true;
             }
-            if (!dataAcidenteInput || new Date(dataAcidenteInput) > new Date()) {
+            if (dataIncompleta('dataAcidente')) {
+                mostrarErro('dataAcidente', 'error-dataAcidente', 'Data inválida: confira o dia, o mês e o ano informados.');
+                temErro = true;
+            } else if (!dataAcidenteInput) {
+                mostrarErro('dataAcidente', 'error-dataAcidente', 'Campo obrigatório: informe a data do acidente.');
+                temErro = true;
+            } else if (new Date(dataAcidenteInput) > new Date()) {
                 mostrarErro('dataAcidente', 'error-dataAcidente', 'Informe uma data válida no passado.');
                 temErro = true;
             }
-            if (Number.isNaN(duracaoProcesso) || duracaoProcesso < 1) {
+            if (!duracaoProcessoInput) {
+                mostrarErro('duracaoProcesso', 'error-duracao', 'Campo obrigatório: informe a duração do processo.');
+                temErro = true;
+            } else if (Number.isNaN(duracaoProcesso) || duracaoProcesso < 1) {
                 mostrarErro('duracaoProcesso', 'error-duracao', 'Informe um número válido de meses.');
+                temErro = true;
+            }
+            if (dataIncompleta('dataNascimento')) {
+                mostrarErro('dataNascimento', 'error-nascimento', 'Data inválida: confira o dia, o mês e o ano informados.');
                 temErro = true;
             }
             if (temErro) return;
